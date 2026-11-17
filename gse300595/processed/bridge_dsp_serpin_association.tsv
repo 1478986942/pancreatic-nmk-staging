@@ -1,0 +1,25 @@
+serpin_axis	stratum	score	n_high	n_low	med_high	med_low	delta_med	cliffs_delta	p	null_empirical_p
+SERPINB2	all	NR_all_score	285	285	0.1028	0.0001	0.1027	0.208	0.0	0.0
+SERPINB2	naive	NR_all_score	160	213	0.0385	-0.0599	0.0985	0.139	0.0212	0.0
+SERPINB2	treated	NR_all_score	125	72	0.236	0.1395	0.0965	0.223	0.0092	0.0
+SERPINB2	all	NR_near100kb_score	285	285	0.1018	-0.0176	0.1194	0.203	0.0	0.0
+SERPINB2	naive	NR_near100kb_score	160	213	0.035	-0.0545	0.0896	0.134	0.0269	0.0
+SERPINB2	treated	NR_near100kb_score	125	72	0.2404	0.1336	0.1068	0.231	0.007	0.0
+SERPINB2	all	R_all_score	285	285	0.0781	0.0222	0.056	0.137	0.0046	0.0635
+SERPINB2	naive	R_all_score	160	213	0.0459	0.0029	0.043	0.08	0.1868	0.6775
+SERPINB2	treated	R_all_score	125	72	0.1527	0.0773	0.0754	0.149	0.0814	0.0
+SERPINB2	all	LAM_proxy_score	285	285	-0.1921	-0.1833	-0.0088	-0.038	0.4331	
+SERPINB2	naive	LAM_proxy_score	160	213	-0.1826	-0.1523	-0.0302	-0.043	0.4724	
+SERPINB2	treated	LAM_proxy_score	125	72	-0.2142	-0.2812	0.067	-0.004	0.9638	
+SERPIN_family	all	NR_all_score	285	285	0.1532	-0.0901	0.2433	0.43	0.0	0.0
+SERPIN_family	naive	NR_all_score	191	182	0.0708	-0.1079	0.1788	0.371	0.0	0.0
+SERPIN_family	treated	NR_all_score	94	103	0.2671	-0.0365	0.3036	0.557	0.0	0.0
+SERPIN_family	all	NR_near100kb_score	285	285	0.1491	-0.0908	0.2399	0.431	0.0	0.0
+SERPIN_family	naive	NR_near100kb_score	191	182	0.0724	-0.1032	0.1756	0.378	0.0	0.0
+SERPIN_family	treated	NR_near100kb_score	94	103	0.2654	-0.0584	0.3238	0.54	0.0	0.0
+SERPIN_family	all	R_all_score	285	285	0.1172	-0.0704	0.1876	0.407	0.0	0.0
+SERPIN_family	naive	R_all_score	191	182	0.0815	-0.0804	0.1619	0.381	0.0	0.0
+SERPIN_family	treated	R_all_score	94	103	0.1756	-0.0461	0.2217	0.473	0.0	0.0
+SERPIN_family	all	LAM_proxy_score	285	285	-0.2276	-0.032	-0.1956	-0.129	0.0079	
+SERPIN_family	naive	LAM_proxy_score	191	182	-0.2201	0.0681	-0.2882	-0.151	0.0116	
+SERPIN_family	treated	LAM_proxy_score	94	103	-0.2563	-0.2187	-0.0375	-0.056	0.497	

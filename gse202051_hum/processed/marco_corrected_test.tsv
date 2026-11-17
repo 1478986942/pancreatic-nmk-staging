@@ -1,0 +1,4 @@
+metric	n_naive	n_treated	naive_mean	treated_mean	naive_median	treated_median	cliffs_delta	p
+MARCO_frac_of_macrophage	18	25	0.082	0.0471	0.033	0.0324	0.058	0.7578
+MARCO_frac_of_myeloid	18	25	0.0715	0.0393	0.0258	0.0278	0.022	0.9116
+MARCO_per_100_nuclei	18	25	0.2911	0.4718	0.2193	0.1485	-0.004	0.9902

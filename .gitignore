@@ -1,0 +1,170 @@
+﻿# ============================================================
+# submit 项目 .gitignore（根治：让 git 不逐个 stat 生信大目录）
+# 备份：.gitignore.bak
+# ============================================================
+
+# 数据 / 大产物（忽略整个目录）
+data/
+process/
+archive/
+weight/
+results/
+result/
+results_formal/
+serpin_repro/data/
+serpin_repro/figures/
+serpin_repro/venv/
+serpin_repro/repo/
+serpin_repro/repo_methods/
+serpin_repro/processed/per_sample_cache/
+serpin_repro/processed/scvi_model/
+workspace/
+output/
+cache/
+figure/
+figures/
+submission/
+MDMU_Net/
+code/
+latex/
+
+# 生信大文件扩展名
+*.h5ad
+*.mtx
+*.mtx.gz
+*.loom
+*.npy
+*.npz
+*.pth
+*.ckpt
+*.pt
+*.bin
+*.h5
+*.tfevents
+*.tsv
+*.rds
+*.fcs
+
+# 中间 / 缓存产物
+__pycache__/
+*.pyc
+.ipynb_checkpoints/
+.cache/
+.browser4-cli/
+.agnes/
+.vscode/
+.trae/
+
+# 编译产物
+latex/build/
+*.aux
+*.log
+*.out
+
+# ============================================================
+# 精简可复现审计包：明确排除本地工具、原始数据与无关项目
+# ============================================================
+
+# 本地代理 / 编辑器 / 缓存
+/.agnes/
+/.browser4-cli/
+/.cache/
+/.opencode/
+/.screenshots/
+/.trae/
+/.vscode/
+/.gitignore.bak
+
+# 与本项目无关的本地训练 / 监控脚本与产物
+/Rplots*.pdf
+/analyze_nan.py
+/check_ckpts.py
+/check_disk.py
+/check_status.py
+/inspect_ckpts.py
+/monitor.py
+/monitor_m4.py
+/read_probe.py
+/requirements.txt
+/run_debug.py
+/status.py
+/test_*.py
+/results_formal/
+
+# 外部模板、投稿包与不在项目固定大纲内的目录
+/els-cas-templates.zip
+/els_cas_templates/
+/elsarticle.zip
+/elsarticle_template/
+/humanpdac_snRNA/
+/submission_package/
+/submission_package.rar
+
+# 原始/派生大数据及上游嵌套仓库
+/gse202051_hum/data/*
+!/gse202051_hum/data/sample_metadata.tsv
+/gse202051_hum/dsp/
+/gse202051_hum/dsp_data/
+/gse300595/data/
+/gse300595/ref/
+/gse300595/processed/merged_peaks.bed
+/serpin_repro/*.txt
+
+# ============================================================
+# 允许进入精简可复现包的结果表
+# ============================================================
+
+# 跨平台更正表
+!/cross_platform_consensus_CORRECTED.tsv
+
+# 方法学论文的顶层表与绘图底表
+!/methods_paper/*.tsv
+!/methods_paper/figs_reproduction/plot_tables/*.tsv
+
+# GSE202051 / GSE199102：仅保留更正后与审计所需表
+!/gse202051_hum/processed/marco_corrected_test.tsv
+!/gse202051_hum/processed/patient_level_serpin_marco.tsv
+!/gse202051_hum/processed/patient_level_serpin_marco_full.tsv
+!/gse202051_hum/processed/patient_marco_corrected.tsv
+!/gse202051_hum/processed_dsp/dsp_patient_level.tsv
+!/gse202051_hum/processed_dsp/step_dsp_summary.tsv
+
+# GSE300595：患者层与机制审计摘要，不纳入逐细胞大表
+!/gse300595/metadata_samples.tsv
+!/gse300595/processed/bridge_*.tsv
+!/gse300595/processed/cluster_by_sample.tsv
+!/gse300595/processed/cluster_composition.tsv
+!/gse300595/processed/cluster_diagnostic_frac.tsv
+!/gse300595/processed/cluster_diagnostic_means.tsv
+!/gse300595/processed/cluster_panel_scores.tsv
+!/gse300595/processed/cnv_burden_by_cluster.tsv
+!/gse300595/processed/cnv_chrom_deviation.tsv
+!/gse300595/processed/leiden_top20.tsv
+!/gse300595/processed/myeloid_atac_pseudobulk_counts.tsv
+!/gse300595/processed/myeloid_cluster_by_sample.tsv
+!/gse300595/processed/myeloid_cluster_composition.tsv
+!/gse300595/processed/myeloid_DAR_annotated.tsv
+!/gse300595/processed/myeloid_DAR_pseudobulk.tsv
+!/gse300595/processed/myeloid_marker_means.tsv
+!/gse300595/processed/myeloid_patient_modules.tsv
+!/gse300595/processed/myeloid_patient_states.tsv
+!/gse300595/processed/myeloid_pseudobulk_counts.tsv
+!/gse300595/processed/myeloid_pseudobulk_DE.tsv
+!/gse300595/processed/myeloid_state_marker_means.tsv
+!/gse300595/processed/patient_serpin_myeloid.tsv
+!/gse300595/processed/qc_summary.tsv
+!/gse300595/processed/DAR_*.txt
+!/gse300595/processed/qc_thresholds.txt
+
+# GSE289138：修正后元数据、冻结标记及描述性汇总
+!/serpin_repro/figures/
+!/serpin_repro/figures/*.png
+!/serpin_repro/processed/cluster_canonical_marker_scores.tsv
+!/serpin_repro/processed/cluster_sample_composition.tsv
+!/serpin_repro/processed/epithelial_serpin_by_cluster.tsv
+!/serpin_repro/processed/myeloid_spp1_marco_pp.tsv
+!/serpin_repro/processed/myeloid_subcluster_serpin.tsv
+!/serpin_repro/processed/niche_fraction_by_sample.tsv
+!/serpin_repro/processed/sample_metadata_CORRECTED.tsv
+!/serpin_repro/processed/serpin_detection_by_celltype.tsv
+!/serpin_repro/processed/serpine1_malignant_fraction_by_sample.tsv

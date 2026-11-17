@@ -1,0 +1,6 @@
+score	n_segments	n_physical_ROI	mean_cluster_size	ICC	design_effect	effective_n	n_inflation
+T-cell (CD3D/CD3E/NKG7)	570	194	2.938	0.0	1.0	570.0	1.0
+Myeloid (CD163/CD68)	570	194	2.938	0.0	1.0	570.0	1.0
+SERPINB2	570	194	2.938	0.1682	1.326	429.8	1.33
+NONRESPONDER accessibility programme	570	194	2.938	0.1316	1.255	454.2	1.25
+RESPONDER accessibility programme	570	194	2.938	0.0209	1.041	547.8	1.04

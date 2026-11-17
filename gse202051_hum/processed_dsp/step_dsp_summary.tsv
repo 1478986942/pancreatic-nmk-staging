@@ -1,0 +1,2 @@
+dataset	total_ROIs	analyzed_ROIs	naive_ROIs	treated_ROIs	SERPIN_threshold	SERPIN_high_ROIs	SERPIN_low_ROIs	SERPIN_genes	MYEO_genes	TCELL_genes
+GSE199102_GeoMx_DSP	570	570	373	197	9.8924	285	285	['SERPINB2']	['CD163', 'CD68']	['CD3D', 'CD3E', 'NKG7']

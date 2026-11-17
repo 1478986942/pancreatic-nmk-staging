@@ -1,0 +1,10 @@
+atac	serpin	n	rho	p
+NR_cpm	SERPIN_frac	12	-0.014	0.9656
+NR_cpm	mean_SERPIN_score	12	0.161	0.6175
+NR_cpm	myeloid_frac	12	0.811	0.0014
+R_cpm	SERPIN_frac	12	-0.07	0.829
+R_cpm	mean_SERPIN_score	12	0.154	0.6331
+R_cpm	myeloid_frac	12	0.748	0.0051
+NR_minus_R	SERPIN_frac	12	0.14	0.6646
+NR_minus_R	mean_SERPIN_score	12	0.07	0.829
+NR_minus_R	myeloid_frac	12	-0.448	0.1446

@@ -1,0 +1,7 @@
+filename	tumor_id	chemistry	genotype	geo_sample_title
+GSM8784900_CF111	CF111	classic	control_KO	Pancreatic tumor and TME cells, control KO
+GSM8784901_CF112	CF112	classic	Serpinb2_KO	Pancreatic tumor and TME cells, Serpinb2 KO
+GSM8784902_CF113	CF113	classic	Serpine1_KO	Pancreatic tumor and TME cells, Serpine1 KO
+GSM9575309_CF111_Flex	CF111	Flex	control_KO	Pancreatic tumor and TME cells, control KO - Flex
+GSM9575310_CF112_Flex	CF112	Flex	Serpinb2_KO	Pancreatic tumor and TME cells, Serpinb2 KO - Flex
+GSM9575311_CF113_Flex	CF113	Flex	Serpine1_KO	Pancreatic tumor and TME cells, Serpine1 KO - Flex

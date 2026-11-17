@@ -1,0 +1,8 @@
+nCount_RNA	> 400
+nFeature_RNA	> 200
+percent_mt	< 1.0%
+percent_ribo	< 2.0%
+nCount_ATAC	> 400
+nFeature_ATAC	> 200
+percent_mt_atac	< 5.0%
+NOT_COMPUTABLE	nucleosome_signal, TSS.enrichment, blacklist_fraction, pct_reads_in_peaks (require fragments.tsv.gz, not distributed)

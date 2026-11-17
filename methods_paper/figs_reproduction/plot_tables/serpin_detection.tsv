@@ -1,0 +1,7 @@
+filename	genotype	chemistry	mal_serpine1_pct	mal_serpinb2_pct
+GSM9575310_CF112_Flex	Serpinb2_KO	Flex	23.35	0.06
+GSM9575311_CF113_Flex	Serpine1_KO	Flex	28.44	0.17
+GSM9575309_CF111_Flex	control_KO	Flex	35.15	0.08
+GSM8784901_CF112	Serpinb2_KO	classic	13.86	0.0
+GSM8784902_CF113	Serpine1_KO	classic	23.67	0.0
+GSM8784900_CF111	control_KO	classic	10.32	0.0

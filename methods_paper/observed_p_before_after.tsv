@@ -1,0 +1,6 @@
+score	p_segment	p_ROI	p_ratio
+T-cell (CD3D/CD3E/NKG7)	0.00036	0.17939	492.03
+Myeloid (CD163/CD68)	0.08219	0.11875	1.44
+SERPINB2	0.0	0.0	3.34777751251861e+61
+NONRESPONDER accessibility programme	2e-05	0.05641	3231.08
+RESPONDER accessibility programme	0.00463	0.2551	55.1

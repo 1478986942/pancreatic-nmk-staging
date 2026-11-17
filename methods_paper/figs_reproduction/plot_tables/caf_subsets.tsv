@@ -1,0 +1,4 @@
+filename	genotype	chemistry	n	LRCC15+ MyCAF	Matrix CAF	MyCAF	apCAF	iCAF
+GSM9575309_CF111_Flex	control_KO	Flex	1107	0.0	62.06	1.54	36.4	0.0
+GSM9575310_CF112_Flex	Serpinb2_KO	Flex	2071	1.64	13.33	34.09	49.25	1.69
+GSM9575311_CF113_Flex	Serpine1_KO	Flex	1392	22.56	24.78	3.81	44.32	4.53

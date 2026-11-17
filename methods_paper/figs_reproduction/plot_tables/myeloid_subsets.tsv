@@ -1,0 +1,7 @@
+filename	genotype	chemistry	n	Arg1+	C1q+ homeostatic	Cxcl9+	DC-like	Folr2+	Il1b+	Monocyte-like	Proliferating	Spp1/Marco+
+GSM8784900_CF111	control_KO	classic	1625	13.6	15.02	3.02	21.23	15.32	3.14	5.66	10.89	12.12
+GSM8784901_CF112	Serpinb2_KO	classic	2017	21.67	12.15	6.05	6.45	14.77	5.4	17.5	5.8	10.21
+GSM8784902_CF113	Serpine1_KO	classic	2084	23.22	6.86	7.82	6.29	16.03	3.84	24.33	6.05	5.57
+GSM9575309_CF111_Flex	control_KO	Flex	1640	6.16	3.05	0.98	8.48	12.38	6.34	1.4	32.44	28.78
+GSM9575310_CF112_Flex	Serpinb2_KO	Flex	2581	7.98	5.23	5.08	5.27	9.72	6.86	5.54	33.86	20.46
+GSM9575311_CF113_Flex	Serpine1_KO	Flex	2443	10.27	4.18	2.05	6.43	10.36	11.58	3.68	23.54	27.92
