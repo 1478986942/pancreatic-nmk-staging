@@ -73,13 +73,27 @@ Output directory: `methods_paper/figs_nature/`
 | `figS2_serpin.pdf` | SERPINE1/SERPINB2 detection % in malignant epithelium by genotype × chemistry |
 | `figS3_effects.pdf` | Genotype-vs-chemistry effect-size ratio per readout |
 
+## Enhanced supplementary panels (more visual variety)
+
+| File | Content |
+|------|---------|
+| `fig2f_dotplot.pdf` | Fig 2 panel f redone: T-cell composition as horizontal dot-blot (subtypes coloured, point size = cell count) |
+| `fig4g_heatmap.pdf` | Fig 4 panel g redone: myeloid subset fractions as 6×9 heatmap (classic + Flex, all genotypes) |
+| `figS2_heatstrip.pdf` | SERPINB2/SERPINE1 detection rates as dual heat-strip (classic/Flex split, mosaic KO check) |
+| `fig_combo_keyreadouts.pdf` | New composite: key T-cell vs myeloid readouts side-by-side for easy cross-lineage comparison |
+
+Run with: `Rscript methods_paper/figs_nature_enhanced.R`
+
 ---
 
 ## How to re-run
 
 ```bash
-cd E:/pancreatic_cancer/submit
+# Full figure set (base reproduction):
 "C:/Program Files/R/R-4.6.1/bin/Rscript.exe" methods_paper/figs_nature.R
+
+# Enhanced variant panels (supplementary):
+"C:/Program Files/R/R-4.6.1/bin\Rscript.exe" methods_paper/figs_nature_enhanced.R
 ```
 
 All output goes to `methods_paper/figs_nature/*.pdf`.
