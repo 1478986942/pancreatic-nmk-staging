@@ -11,7 +11,7 @@
 ### 细胞类型注释
 | 列名 | 含义 | 取值数 | 用法 |
 |------|------|--------|------|
-| `broad_celltypes` | 大类: Malignant/Immune/Fibroblast/Endothelial/Endocrine/Unknown | 7 | Fig B/Umap基础色 |
+| `broad_celltypes` | 大类: Epithelial/Fibroblast/Immune/Endothelial/Endocrine/Schwann/unknown（注意是小写 `unknown`；**恶性细胞标为 `Epithelial`，数据中不存在 `Malignant` 标签**） | 7 | Fig B/Umap基础色 |
 | `new_celltypes` | 细分类: 45亚型 (Malignant/Epid-Ductal/etc.) | 45 | 进阶聚类分析 |
 | `Level 3 Annotation` | 三级注释 | 39 | 与 new_celltypes 对应 |
 | `leiden` | Seurat 聚类 | 31 | 参考聚类编号 |
@@ -62,13 +62,42 @@
 
 ## 练习脚本说明
 
-`practice_gse202051.py` 生成 6 张练习图：
+`practice_gse202051.py` 生成 9 张图（A–H + A4 合成图）：
 
 ```
-gse202051_A_celltype_composition.png      宽柱+高柱组合，细胞类型占比
-gse202051_B_umap_broadcelltype.png        UMAP 按 broad_celltypes 着色
-gse202051_C_umap_immune_response.png      免疫细胞 UMAP × response
-gse202051_D_serpin_fraction_by_response.png SERPIN信号 violin + jitter
-gse202051_E_marker_dotplot.png            Top marker log2FC vs p_adj 散点
-gse202051_F_marker_heatmap.png            Top 8 markers × cell types heatmap
+gse202051_A_celltype_composition.png        双堆叠柱：左=每类型 naive/treated 占比，右=每状态细胞类型构成
+gse202051_B_umap_broadcelltype.png          UMAP 按 broad_celltypes 着色
+gse202051_C_umap_immune_response.png        免疫细胞 UMAP × response
+gse202051_D_serpin_fraction_by_response.png SERPIN 信号 violin + 患者级统计
+gse202051_E_marker_dotplot.png              marker dotplot：行=细胞类型，列=top基因，点=%表达，色=z-score
+gse202051_F_marker_heatmap.png              34 marker × 7 谱系 热图（seaborn）
+gse202051_G_umap_newcelltypes.png           45 亚型 UMAP：谱系定色相 + 谱系内明度分档 + 数字标注
+gse202051_H_heatmap_complexheatmap.png      F 的 R/ComplexHeatmap 重绘版
+gse202051_Figure1_A4.png                    A–F 按英寸排版的 A4 整图
+heatmap_zscore_matrix.tsv                   → 供 R 读取的 z-score 矩阵
+heatmap_row_annotation.tsv                  → 基因 → 谱系
+heatmap_col_annotation.tsv                  → 谱系 → 核数
 ```
+
+`practice_heatmap_complexheatmap.R` 只读取上述三个 TSV 重绘，**不重算任何统计**，
+因此 Python 与 R 两版热图可比。
+
+### 面板 D 的统计口径（重要）
+
+- 推断单位是**患者**，不是细胞核。每患者先取 malignant（`broad_celltypes=='Epithelial'`）
+  核的 SERPIN 信号均值，再在患者层面比较。
+- 每组患者数：Moderate 7 / Minimal 10 / Poor 6（仅纳入 ≥15 个恶性核的患者）。
+- **Kruskal–Wallis p = 0.339**；两两双侧 Mann–Whitney：
+  Moderate vs Poor p = 0.445，Moderate vs Minimal p = 0.813，Minimal vs Poor p = 0.118。
+- **结论：未检出差异。** 不得换检验、改阈值或事后分层去凑显著。
+  名义 p 值本身也是探索性的，且未做多重比较校正。
+
+### 练习中踩到的坑（已修）
+
+1. A 面板归一化方向：按行归一的百分比不能拿去画按列堆叠的图（曾出现 353%）。
+2. `min(p, 1e-300)` 会把所有 p 压到同一下限，log 轴整片消失；应为 `max(p, 1e-300)`。
+3. 45 类 UMAP 用 `tab20` 相邻色会把 Ductal 与 Malignant 画成同一浅青；
+   改为谱系定色相 + 谱系内明度分档。
+4. `imshow` 拼图保持等比会在每行下方留大片空白；改为裁剪白边后按真实宽高比
+   以英寸定位 axes。
+5. `matplotlib` 没有 `'grey20'`（那是 ggplot 写法），应为 `'#333333'`。

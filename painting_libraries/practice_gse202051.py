@@ -129,7 +129,9 @@ for ct in ct_order_col:
 ax_a2.set_ylabel('% of cells', fontsize=9)
 ax_a2.set_xlabel('Treatment status', fontsize=9)
 ax_a2.set_ylim(0, 100)
-ax_a2.set_title('B', fontsize=13, fontweight='bold', loc='left', pad=6)
+# No panel letter here: the composite uses A for the whole two-part panel,
+# and a second "B" would collide with the UMAP panel letter.
+ax_a2.set_title('', fontsize=13, fontweight='bold', loc='left', pad=6)
 ax_a2.legend(title=None, loc='center left', bbox_to_anchor=(1.02, 0.5),
              fontsize=7, frameon=False, handlelength=1.0)
 nature_theme()
@@ -222,31 +224,88 @@ pat_df = pat_df[pat_df['response'].isin(['Moderate response','Minimal response',
 # Also keep only patients with enough cells
 pat_df = pat_df[pat_df['count'] >= 15]
 
-fig_d, ax_d = plt.subplots(figsize=(4.8, 4.0))
-responses = pat_df['response'].cat.remove_unused_categories()
-groups = []
-values = []
-for resp in responses:
+fig_d, ax_d = plt.subplots(figsize=(5.2, 4.4))
+resp_order_d = [r for r in ['Moderate response','Minimal response','Poor response']
+                if r in set(pat_df['response'].astype(str))]
+groups, values = [], []
+for resp in resp_order_d:
     sub = pat_df[pat_df['response']==resp]
     groups.extend([resp]*len(sub))
     values.extend(sub['serpin_frac'].tolist())
 df_plot = pd.DataFrame({'Response': groups, 'Serpin Fraction': values})
+df_plot['Response'] = pd.Categorical(df_plot['Response'], categories=resp_order_d, ordered=True)
 
 # Violin + jitter
-sns.violinplot(x='Response', y='Serpin Fraction', data=df_plot, 
-               inner=None, palette=PAL_RESP, scale='count', ax=ax_d, linewidth=0.8)
-sns.stripplot(x='Response', y='Serpin Fraction', data=df_plot, 
+sns.violinplot(x='Response', y='Serpin Fraction', data=df_plot,
+               inner=None, palette=PAL_RESP, scale='count', ax=ax_d, linewidth=0.8,
+               order=resp_order_d)
+sns.stripplot(x='Response', y='Serpin Fraction', data=df_plot,
               color='white', edgecolor='black', linewidth=0.3,
-              size=4, alpha=0.7, ax=ax_d, jitter=True)
-ax_d.set_xlabel('Response category', fontsize=9)
+              size=4, alpha=0.75, ax=ax_d, jitter=True, order=resp_order_d)
+
+# --- Patient-level statistics (inference unit = patient) ---
+from scipy.stats import mannwhitneyu, kruskal
+arrays = {r: pat_df.loc[pat_df['response'].astype(str)==r, 'serpin_frac'].values
+          for r in resp_order_d}
+ns = {r: len(arrays[r]) for r in resp_order_d}
+
+# Kruskal-Wallis across the >=2 groups
+kw_p = np.nan
+if len(resp_order_d) >= 2:
+    try:
+        kw = kruskal(*[arrays[r] for r in resp_order_d if len(arrays[r]) > 0])
+        kw_p = kw.pvalue
+    except Exception:
+        pass
+
+# Pairwise two-sided Mann-Whitney (exploratory; Bonferroni shown as note)
+pairs = [('Moderate response','Poor response'),
+         ('Moderate response','Minimal response'),
+         ('Minimal response','Poor response')]
+def p_stars(p):
+    return '***' if p < 0.001 else '**' if p < 0.01 else '*' if p < 0.05 else 'ns'
+
+ymax = df_plot['Serpin Fraction'].max()
+yrange = ymax - df_plot['Serpin Fraction'].min()
+step = yrange * 0.16
+bar_base = ymax + yrange * 0.10
+used = []
+for i, (a, b) in enumerate(pairs):
+    if a not in arrays or b not in arrays:
+        continue
+    if len(arrays[a]) < 2 or len(arrays[b]) < 2:
+        continue
+    u, p = mannwhitneyu(arrays[a], arrays[b], alternative='two-sided')
+    x1, x2 = resp_order_d.index(a), resp_order_d.index(b)
+    y = bar_base + i * step
+    ax_d.plot([x1, x1, x2, x2], [y, y+step*0.25, y+step*0.25, y], lw=0.6, c='black')
+    ax_d.text((x1+x2)/2, y + step*0.28, f'{p_stars(p)}\n(p={p:.3g})',
+              ha='center', va='bottom', fontsize=6.2, color='black')
+
+# n per group as x-tick annotation
+xticklabels = [f'{r}\n(n={ns[r]})' for r in resp_order_d]
+ax_d.set_xticks(range(len(resp_order_d)))
+ax_d.set_xticklabels(xticklabels, fontsize=7.5)
+
+# KW p in corner
+if not np.isnan(kw_p):
+    ax_d.text(0.98, 1.02, f'Kruskal-Wallis p = {kw_p:.3g}',
+              transform=ax_d.transAxes, ha='right', va='bottom',
+              fontsize=7, color='#333333')
+
+ax_d.set_xlabel('Best overall response', fontsize=9)
 ax_d.set_ylabel('Mean SERPIN signal (malignant)', fontsize=9)
 ax_d.set_title('D', fontsize=13, fontweight='bold', loc='left', pad=4)
-ax_d.tick_params(axis='x', rotation=15, labelsize=8)
+ax_d.set_ylim(top=bar_base + len(pairs)*step + step*0.6)
 nature_theme()
 plt.tight_layout()
 plt.savefig(os.path.join(OUT, "gse202051_D_serpin_fraction_by_response.png"), dpi=250, bbox_inches='tight')
 plt.close()
-print("  Saved D")
+print(f"  Saved D  |  n per group: {ns}  |  KW p={kw_p:.3g}")
+for a, b in pairs:
+    if a in arrays and b in arrays and len(arrays[a])>1 and len(arrays[b])>1:
+        _, p = mannwhitneyu(arrays[a], arrays[b], alternative='two-sided')
+        print(f"    {a} vs {b}: MWU p={p:.4g}")
 
 
 # =====================================================================
@@ -404,6 +463,206 @@ if markers_out:
     plt.savefig(os.path.join(OUT, "gse202051_F_marker_heatmap.png"), dpi=250, bbox_inches='tight')
     plt.close()
     print("  Saved F")
+
+# =====================================================================
+# G. UMAP coloured by new_celltypes (45 subtypes), number-labelled
+#    Strategy for >20 categories: stable palette + numeric labels on
+#    centroids + numbered legend (Nature-style for fine annotation).
+# =====================================================================
+print("[Fig G] UMAP new_celltypes (45 subtypes) ...")
+try:
+    import matplotlib.patheffects as pe
+    from matplotlib.lines import Line2D
+
+    cats = list(adata.obs['new_celltypes'].cat.categories)
+    cats_sorted = sorted(cats, key=lambda c: (c.split('-')[0], c))
+    idx_map = {c: i + 1 for i, c in enumerate(cats_sorted)}
+    print(f"  n subtypes: {len(cats_sorted)}")
+
+    # Colour scheme for 45 categories: one hue per lineage, then vary
+    # lightness inside the lineage. Adjacent tab20 hues made Ductal and
+    # Malignant indistinguishable, so shades beat a flat qualitative map.
+    import matplotlib.colors as mcolors
+
+    def shade_series(base_hex, k):
+        rgb = np.array(mcolors.to_rgb(base_hex))
+        if k <= 1:
+            return [tuple(rgb)]
+        dark = np.array([0.05, 0.05, 0.05])
+        light = np.array([1.0, 1.0, 1.0])
+        out = []
+        for j in range(k):
+            f = j / (k - 1)
+            w = abs(f - 0.5) * 2 * 0.62
+            tgt = light if f < 0.5 else dark
+            out.append(tuple(rgb * (1 - w) + tgt * w))
+        return out
+
+    from collections import OrderedDict
+    by_parent = OrderedDict()
+    for c in cats_sorted:
+        by_parent.setdefault(c.split('-')[0], []).append(c)
+
+    col_map = {}
+    for parent, members in by_parent.items():
+        base = PAL_CT.get(parent, '#7f7f7f')
+        for c, col in zip(members, shade_series(base, len(members))):
+            col_map[c] = col
+
+    n_s = min(40000, adata.n_obs)
+    idx_g = np.random.default_rng(7).choice(adata.n_obs, n_s, replace=False)
+    sub_g = adata[idx_g]
+    U = np.asarray(sub_g.obsm['X_umap'])
+    lab_g = sub_g.obs['new_celltypes'].astype(str).values
+
+    fig_g, ax_g = plt.subplots(figsize=(10.4, 6.4))
+    # draw largest categories first so small ones are not buried
+    sizes = {c: int((lab_g == c).sum()) for c in cats_sorted}
+    for c in sorted(cats_sorted, key=lambda x: -sizes[x]):
+        m = lab_g == c
+        if m.sum() == 0:
+            continue
+        ax_g.scatter(U[m, 0], U[m, 1], s=1.0, alpha=0.85,
+                     c=[col_map[c]], edgecolor='none', rasterized=True)
+    for c in cats_sorted:
+        m = lab_g == c
+        if m.sum() < 8:
+            continue
+        cx, cy = np.median(U[m, 0]), np.median(U[m, 1])
+        ax_g.text(cx, cy, str(idx_map[c]), fontsize=5.0, ha='center', va='center',
+                  fontweight='bold', color='black', zorder=5,
+                  path_effects=[pe.withStroke(linewidth=1.5, foreground='white')])
+
+    ax_g.set_xlabel('UMAP 1', fontsize=9)
+    ax_g.set_ylabel('UMAP 2', fontsize=9)
+    ax_g.set_title('G', fontsize=13, fontweight='bold', loc='left', pad=4)
+    ax_g.set_xticks([]); ax_g.set_yticks([])
+    for sp_ in ('top', 'right', 'left', 'bottom'):
+        ax_g.spines[sp_].set_visible(False)
+
+    handles = [Line2D([], [], marker='o', linestyle='', markersize=4.0,
+                      markerfacecolor=col_map[c], markeredgecolor='none',
+                      label=f"{idx_map[c]}  {c.split('-', 1)[-1]}")
+               for c in cats_sorted]
+    leg = ax_g.legend(handles=handles, loc='center left',
+                      bbox_to_anchor=(1.01, 0.5), ncol=3,
+                      fontsize=4.3, frameon=False, handletextpad=0.35,
+                      columnspacing=0.6, labelspacing=0.28)
+    for t in leg.get_texts():
+        t.set_fontname('Arial')
+
+    plt.tight_layout()
+    plt.savefig(os.path.join(OUT, "gse202051_G_umap_newcelltypes.png"),
+                dpi=300, bbox_inches='tight')
+    plt.close()
+    print("  Saved G")
+except Exception as ex:
+    import traceback; traceback.print_exc()
+    print(f"  Fig G failed: {ex}")
+
+
+# =====================================================================
+# Export tables for the R / ComplexHeatmap redraw (panel H)
+# =====================================================================
+print("[Export] tables for ComplexHeatmap ...")
+try:
+    if 'mat_z' in dir():
+        mat_z.to_csv(os.path.join(OUT, "heatmap_zscore_matrix.tsv"), sep='\t')
+        row_ann = (df_top8[['gene', 'celltype']]
+                   .drop_duplicates(subset=['gene'])
+                   .rename(columns={'gene': 'gene_id', 'celltype': 'lineage'}))
+        row_ann.to_csv(os.path.join(OUT, "heatmap_row_annotation.tsv"),
+                       sep='\t', index=False)
+        col_ann = pd.DataFrame({
+            'celltype': list(mat_z.columns),
+            'n_cells': [int((adata.obs['broad_celltypes'] == c).sum())
+                        for c in mat_z.columns]})
+        col_ann.to_csv(os.path.join(OUT, "heatmap_col_annotation.tsv"),
+                       sep='\t', index=False)
+        print(f"  Wrote matrix {mat_z.shape} + row/col annotations")
+    else:
+        print("  SKIP: mat_z not available")
+except Exception as ex:
+    print(f"  Export failed: {ex}")
+
+
+# =====================================================================
+# Figure 1 — combine A-F into one A4-ready composite
+# =====================================================================
+print("[Figure 1] Composite A4 layout ...")
+try:
+    from matplotlib.image import imread
+
+    def _trim_white(arr, pad=6, thr=250):
+        """Crop uniform white border so panels sit tight on the page."""
+        if arr.ndim == 3 and arr.shape[2] >= 3:
+            rgb = arr[:, :, :3]
+        else:
+            rgb = np.repeat(arr[:, :, None], 3, axis=2)
+        if rgb.dtype != np.uint8:
+            rgb = np.clip(rgb * 255, 0, 255).astype(np.uint8)
+        mask = (rgb < thr).any(axis=2)
+        if not mask.any():
+            return arr
+        rows_i = np.where(mask.any(axis=1))[0]
+        cols_i = np.where(mask.any(axis=0))[0]
+        r0 = max(rows_i[0] - pad, 0)
+        r1 = min(rows_i[-1] + 1 + pad, arr.shape[0])
+        c0 = max(cols_i[0] - pad, 0)
+        c1 = min(cols_i[-1] + 1 + pad, arr.shape[1])
+        return arr[r0:r1, c0:c1]
+
+    page_w, page_h = 7.2, 9.2          # inches (A4 width-safe)
+    margin = 0.12
+    hgap, vgap = 0.30, 0.30
+
+    panels = {
+        "A": ("gse202051_A_celltype_composition.png",       4.05),
+        "B": ("gse202051_B_umap_broadcelltype.png",         2.80),
+        "C": ("gse202051_C_umap_immune_response.png",       3.30),
+        "D": ("gse202051_D_serpin_fraction_by_response.png", 3.55),
+        "E": ("gse202051_E_marker_dotplot.png",             4.15),
+        "F": ("gse202051_F_marker_heatmap.png",             2.70),
+    }
+    rows = [["A", "B"], ["C", "D"], ["E", "F"]]
+
+    imgs = {}
+    for key, (fn, w_in) in panels.items():
+        p = os.path.join(OUT, fn)
+        if not os.path.exists(p):
+            print(f"  missing: {fn}")
+            continue
+        arr = _trim_white(imread(p))
+        h_px, w_px = arr.shape[:2]
+        imgs[key] = (arr, w_in / (w_px / h_px))   # (array, height_in)
+
+    fig_c = plt.figure(figsize=(page_w, page_h), facecolor='white')
+    y_top = page_h - margin
+    for row in rows:
+        row = [k for k in row if k in imgs]
+        if not row:
+            continue
+        widths = [panels[k][1] for k in row]
+        heights = [imgs[k][1] for k in row]
+        row_h = max(heights)
+        row_w = sum(widths) + hgap * (len(row) - 1)
+        x = (page_w - row_w) / 2.0
+        for k, w_in, h_in in zip(row, widths, heights):
+            y = y_top - row_h + (row_h - h_in) / 2.0
+            ax_c = fig_c.add_axes([x / page_w, y / page_h, w_in / page_w, h_in / page_h])
+            ax_c.imshow(imgs[k][0])
+            ax_c.set_axis_off()
+            x += w_in + hgap
+        y_top -= row_h + vgap
+
+    fig_c.savefig(os.path.join(OUT, "gse202051_Figure1_A4.png"),
+                  dpi=300, bbox_inches='tight', facecolor='white')
+    plt.close(fig_c)
+    print(f"  Saved Figure1_A4  |  bottom edge at {y_top:.2f} in")
+except Exception as ex:
+    import traceback; traceback.print_exc()
+    print(f"  Composite failed: {ex}")
+
 
 print(f"\nAll practice figures saved to: {OUT}")
 print("Files:", sorted(os.listdir(OUT)))
