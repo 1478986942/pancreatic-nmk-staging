@@ -31,7 +31,7 @@
 | Repo | What it has | How to use |
 |------|------------|-----------|
 | **bioicons** | 2000+ SVG biological icons (cells, mice, antibodies, DNA, slides) | Download SVG → drag into Inkscape/draw.io for workflow schematics |
-| **SERVIER/bioart** | CC BY 4.0 medical illustrations (tissues, organs, instruments) | Cite Servier Medical Art; same source used in the Nature paper |
+| **SERVIER Medical Art** (`smart.servier.com`) | CC BY 4.0 medical illustrations (tissues, organs, instruments) — same source cited in the Nature paper | Download from website directly; no GitHub repo |
 
 ---
 
